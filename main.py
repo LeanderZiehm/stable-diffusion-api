@@ -4,16 +4,23 @@ from diffusers import StableDiffusionPipeline
 import torch, io
 from fastapi.responses import StreamingResponse
 
+
 class Payload(BaseModel):
     prompt: str
     width: int = 512
     height: int = 512
 
+
 app = FastAPI()
 pipe = StableDiffusionPipeline.from_pretrained(
-    "runwayml/stable-diffusion-v1-5",
-    torch_dtype=torch.float16
+    "runwayml/stable-diffusion-v1-5", torch_dtype=torch.float16
 ).to("cuda")
+
+
+@app.get("/")
+async def read_root():
+    return {"message": "Hello"}
+
 
 @app.post("/generate")
 async def generate(payload: Payload):
